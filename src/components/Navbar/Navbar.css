@@ -1,0 +1,20 @@
+.navbar {
+	padding: 0;
+	height: 50px;
+}
+
+.logo-text {
+	display: inline-block;
+	font-weight: normal;
+	margin-left: 10px;
+	vertical-align: middle;
+}
+.logo-text .bold {
+	font-weight: bold;
+}
+.fa-meteor {
+	color: white;
+	height: 35px;
+	width: 35px;
+	vertical-align: middle;
+}
