@@ -1,20 +1,31 @@
 .navbar {
-	padding: 0;
-	height: 50px;
+	padding: 25px;
+	margin: 0 auto;
+	display: block;
+	text-align: center;
+	margin-bottom: 15px;
 }
-
+.logo-container {
+	margin-bottom: 15px;
+}
 .logo-text {
 	display: inline-block;
 	font-weight: normal;
 	margin-left: 10px;
 	vertical-align: middle;
+	color: #83c252;
+	font-size: 1.5em;
 }
 .logo-text .bold {
 	font-weight: bold;
 }
 .fa-meteor {
-	color: white;
+	color: #ff8838;
 	height: 35px;
 	width: 35px;
 	vertical-align: middle;
+}
+.account {
+	color: #444444ba;
+	font-weight: bold;
 }

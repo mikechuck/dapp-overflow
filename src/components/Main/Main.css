@@ -1,5 +1,11 @@
-.main-container {
-	background-color: #22262a;
+html,
+body {
+	height: 100%;
+}
+body {
+	background-color: #e9fefe;
+	/* text-shadow: 0 0 10px #ffe0bf; */
+	color: #444444c7;
 }
 .column-left,
 .column-right {
@@ -44,8 +50,8 @@
 	height: 100px;
 }
 .column-middle .submit-button {
-	background-color: #B81600;
-	border-color: #B81600;
+	background-color: #268eef;
+	border-color: #268eef;
 }
 .column-middle .submit-button:active {
 	background-color: #991200 !important;
