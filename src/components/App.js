@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Web3 from 'web3';
 import Identicon from 'identicon.js';
 import './App.css';
-import Decentragram from '../abis/Decentragram.json'
+import DappOverflow from '../abis/DappOverflow.json'
 import Navbar from './Navbar/Navbar'
 import Main from './Main/Main'
 
@@ -33,27 +33,27 @@ class App extends Component {
 		this.setState({account: accounts[0]})
 
 		const networkId = await web3.eth.net.getId()
-		const networkData = Decentragram.networks[networkId]
+		const networkData = DappOverflow.networks[networkId]
 		if (networkData) {
-			const decentragram = web3.eth.Contract(Decentragram.abi, networkData.address)
-			this.setState({decentragram})
-			const imagesCount = await decentragram.methods.imageCount().call()
-			this.setState({imagesCount})
+			const dappOverflow = web3.eth.Contract(DappOverflow.abi, networkData.address)
+			this.setState({dappOverflow})
+			const postCount = await dappOverflow.methods.postCount().call()
+			this.setState({postCount})
 
-			for (var i = 1; i <= imagesCount; i++) {
-				const image = await decentragram.methods.images(i).call()
+			for (var i = 1; i <= postCount; i++) {
+				const post = await dappOverflow.methods.posts(i).call()
 				this.setState({
-					images: [...this.state.images, image]
+					posts: [...this.state.posts, post]
 				})
 			}
 
 			this.setState({
-				images: this.state.images.sort((a, b) => b.tipAmount - a.tipAmount)
+				posts: this.state.posts.sort((a, b) => b.tipAmount - a.tipAmount)
 			})
 
 			this.setState({loading: false})
 		} else {
-			window.alert("Decentragram contract has not been deployed to this network")
+			window.alert("DappOVerflow contract has not been deployed to this network")
 		}
 	}
 
@@ -69,9 +69,7 @@ class App extends Component {
 		}
 	}
 
-	uploadImage = description => {
-		console.log("Submitting file to ipfs...")
-
+	createPost = (title, topic, question) => {
 		ipfs.add(this.state.buffer, (error, result) => {
 			console.log("Ipfs result:", result)
 			if (error) {
@@ -79,41 +77,45 @@ class App extends Component {
 				return
 			}
 
+			console.log("saving with image hash:", result[0].hash)
+
 			this.setState({loading: true})
-			this.state.decentragram.methods.uploadImage(result[0].hash, description).send({from: this.state.account}).on('transactionHash', (hash) => {
+			this.state.dappOverflow.methods.createPost(title, topic, result[0].hash, question).send({from: this.state.account}).on('transactionHash', (hash) => {
 				this.setState({loading: false})
 			})
 		})
 	}
 
-	tipImageOwner = (id, tipAmount) => {
-		this.setState({loading: true})
-		this.state.decentragram.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
-			this.setState({ loading: false })
-		  })
+	tipPostOwner = (id, tipAmount) => {
+		console.log("tipping post owner")
+		// this.setState({loading: true})
+		// this.state.dappOverflow.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
+		// 	this.setState({ loading: false })
+		//   })
 	}
 
 	constructor(props) {
 		super(props)
 		this.state = {
 			account: '',
-			decentagram: null,
-			images: [],
+			dappOverflow: null,
+			posts: [],
 			loading: true
 		}
 	}
 
 	render() {
+		console.log("this.state.posts:", this.state.posts)
 		return (
 			<div>
 				<Navbar account={this.state.account} />
 				{this.state.loading
 					? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
 					: <Main
-						images={this.state.images}
+						posts={this.state.posts}
 						captureFile={this.captureFile}
-						uploadImage={this.uploadImage}
-						tipImageOwner={this.tipImageOwner}
+						createPost={this.createPost}
+						tipPostOwner={this.tipPostOwner}
 					/>
 				}
 			</div>

@@ -1,5 +1,5 @@
-const Decentragram = artifacts.require("Decentragram");
+const DappOverflow = artifacts.require("DappOverflow");
 
 module.exports = function(deployer) {
-	deployer.deploy(Decentragram);
+	deployer.deploy(DappOverflow);
 };

@@ -52,15 +52,19 @@
     border-color: #991200 !important;
 }
 
-/* Right column */
 .question-card {
 	color: #444;
 }
 .question-card img {
 	max-width: 200px;
 }
-.question-card .list-group-item .image-container,
-.question-card .list-group-item .description-container {
+.question-card .list-group-item .post-container,
+.question-card .list-group-item .question-container {
 	display: inline-block;
 	vertical-align: top;
+}
+
+.title-input,
+.topic-select {
+	margin-bottom: 15px;
 }
