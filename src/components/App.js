@@ -12,8 +12,13 @@ const ipfs = ipfsClient({host: 'ipfs.infura.io', port: 5001, protocol: 'https'})
 class App extends Component {
 
 	async componentWillMount() {
-		await this.loadWeb3()
-		await this.loadBlockchainData()
+		try {
+			await this.loadWeb3()
+			await this.loadBlockchainData()
+		} catch (err) {
+			console.log("err:", err)
+			this.setState({error: true})
+		}
 	}
 
 	async loadWeb3() {
@@ -28,30 +33,31 @@ class App extends Component {
 	}
 
 	async loadBlockchainData() {
+		console.log("loading blockchain data")
 		const web3 = window.web3
 		const accounts = await web3.eth.getAccounts()
+		console.log("accounts:", accounts)
+		const networkId = await web3.eth.net.getId()
+		const networkData = DappOverflow.networks[networkId]		
 		this.setState({account: accounts[0]})
 
-		const networkId = await web3.eth.net.getId()
-		const networkData = DappOverflow.networks[networkId]
+		console.log("networkData:", networkData)
+
 		if (networkData) {
+
 			const dappOverflow = web3.eth.Contract(DappOverflow.abi, networkData.address)
 			this.setState({dappOverflow})
-			const postCount = await dappOverflow.methods.postCount().call()
-			this.setState({postCount})
+			await this.getPosts()
 
-			for (var i = 1; i <= postCount; i++) {
-				const post = await dappOverflow.methods.posts(i).call()
-				this.setState({
-					posts: [...this.state.posts, post]
-				})
-			}
-
-			this.setState({
-				posts: this.state.posts.sort((a, b) => b.tipAmount - a.tipAmount)
-			})
-
-			this.setState({loading: false})
+			// var filter = web3.eth.filter({
+			// 	fromBlock:0,
+			// 	toBlock: 'latest',
+			// 	address: networkData.address,
+			// 	'topics':[
+			// 		web3.utils.sha3('PostCreated(uint,string,string,string,string,uint,uint,address)')
+			// 	]
+			// });
+			// console.log("filter:", filter)
 		} else {
 			window.alert("DappOVerflow contract has not been deployed to this network")
 		}
@@ -65,25 +71,44 @@ class App extends Component {
 
 		reader.onloadend = () => {
 			this.setState({buffer: Buffer(reader.result)})
-			console.log("buffer", this.state.buffer)
 		}
 	}
 
 	createPost = (title, topic, question) => {
 		ipfs.add(this.state.buffer, (error, result) => {
-			console.log("Ipfs result:", result)
 			if (error) {
 				console.error(error)
 				return
 			}
 
-			console.log("saving with image hash:", result[0].hash)
-
 			this.setState({loading: true})
-			this.state.dappOverflow.methods.createPost(title, topic, result[0].hash, question).send({from: this.state.account}).on('transactionHash', (hash) => {
+			this.state.dappOverflow.methods.createPost(title, topic, result[0].hash, question).send({from: this.state.account}).on('transactionHash', async (hash) => {
 				this.setState({loading: false})
+				console.log("hash:", hash)
+				await this.getPosts()
 			})
 		})
+	}
+
+	async getPosts() {
+		const postCount = await this.state.dappOverflow.methods.postCount().call()
+		console.log("postCount:", postCount.toString(2))
+		this.setState({postCount})
+
+		for (var i = 1; i <= 12; i++) {
+			console.log("i:", i)
+			const post = await this.state.dappOverflow.methods.posts(i).call()
+			console.log("post:", post)
+			this.setState({
+				posts: [...this.state.posts, post]
+			})
+		}
+
+		this.setState({
+			posts: this.state.posts.sort((a, b) => b.tipAmount - a.tipAmount)
+		})
+
+		this.setState({loading: false})
 	}
 
 	tipPostOwner = (id, tipAmount) => {
@@ -100,23 +125,26 @@ class App extends Component {
 			account: '',
 			dappOverflow: null,
 			posts: [],
-			loading: true
+			loading: true,
+			error: false
 		}
 	}
 
 	render() {
-		console.log("this.state.posts:", this.state.posts)
 		return (
-			<div>
+			<div className="main">
 				<Navbar account={this.state.account} />
-				{this.state.loading
-					? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
-					: <Main
-						posts={this.state.posts}
-						captureFile={this.captureFile}
-						createPost={this.createPost}
-						tipPostOwner={this.tipPostOwner}
-					/>
+				{this.state.error 
+					? <div id="error" className="error text-center mt-5"><p>There was an error connecting to the blockchain or account. Please refresh and try again.</p></div>
+					: this.state.loading
+						? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
+						: <Main
+							posts={this.state.posts}
+							captureFile={this.captureFile}
+							createPost={this.createPost}
+							tipPostOwner={this.tipPostOwner}
+						/>
+						
 				}
 			</div>
 		);
@@ -124,3 +152,5 @@ class App extends Component {
 }
 
 export default App;
+
+// https://mycolor.space/?hex=%23845EC2&sub=1

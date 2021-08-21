@@ -20,17 +20,17 @@ class Navbar extends Component {
 				<ul className="navbar-nav px-3">
 					<li className="nav-item">
 						<span className="account">{this.props.account}</span>
-						{this.props.account
-							? <img
-								className='ml-2'
-								width='30'
-								height='30'
-								src={`data:image/png;base64,${new Identicon(this.props.account, 30).toString()}`}
-							/>
-							: <span></span>
-						}
 					</li>
 				</ul>
+				{this.props.account
+					? <img
+						className='account-icon ml-2'
+						width='30'
+						height='30'
+						src={`data:image/png;base64,${new Identicon(this.props.account, 30).toString()}`}
+					/>
+					: <span></span>
+				}
 			</nav>
 		);
 	}

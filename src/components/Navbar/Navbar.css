@@ -13,19 +13,24 @@
 	font-weight: normal;
 	margin-left: 10px;
 	vertical-align: middle;
-	color: #83c252;
-	font-size: 1.5em;
+	color: #F9F871;
+	font-size: 2em;
 }
 .logo-text .bold {
 	font-weight: bold;
 }
 .fa-meteor {
-	color: #ff8838;
+	color: #FF9671;
 	height: 35px;
 	width: 35px;
 	vertical-align: middle;
 }
 .account {
-	color: #444444ba;
+	color: #4B4453;
 	font-weight: bold;
+}
+.account-icon {
+	position: absolute;
+	right: 25px;
+    top: 25px;
 }

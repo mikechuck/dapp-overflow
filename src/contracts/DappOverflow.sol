@@ -84,6 +84,9 @@ contract DappOverflow {
 		require(bytes(_question).length > 0);
 		require(msg.sender != address(0x0));
 
+		// Increment post count
+		postCount++;
+
 		// Set initial tip to 0 for new posts
 		uint tipAmount = 0;
 		uint date = now;
@@ -91,9 +94,6 @@ contract DappOverflow {
 		posts[postCount] = Post(postCount, _title, _topic, _image, _question, tipAmount, date, msg.sender);
 
 		emit PostCreated(postCount, _title, _topic, _image, _question, tipAmount, date, msg.sender);
-
-		// Increment post count
-		postCount++;
 	}
 
 
@@ -106,17 +106,16 @@ contract DappOverflow {
 		require(bytes(_content).length > 0);
 		require(msg.sender != address(0x0));
 
+		//Increment answer count
+		answerCount++;
+
 		uint date = now;
 		uint tipAmount = 0;
 
 		answers[answerCount] = Answer(answerCount, _postId, _content, tipAmount, date, msg.sender);
 
 		emit AnswerCreated(answerCount, _postId, _content, tipAmount, date, msg.sender);
-
-		//Increment answer count
-		answerCount++;
 	}
-
 
 	// Tip Post
 
