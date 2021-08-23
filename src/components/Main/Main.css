@@ -1,18 +1,23 @@
 
-/* Question form container */
-.form-container {
+.main-container {
 	margin: 0 auto;
 	background: white;
 	border-radius: 25px;
-	padding: 25px;
-	margin-bottom: 50px;
+	margin-bottom: 75px;
+	max-width: 850px;
+}
+
+/* Question form container */
+.form-container {
+	width: 100%;
+	padding: 25px
 }
 .form-container .form-title {
 	font-size: 1.5rem;
 }
 .form-container form {
 	margin-top: 25px;
-	max-width: 850px;
+	/* max-width: 850px; */
 }
 .form-container input,
 .form-container select,
@@ -35,20 +40,65 @@
 	background-color: #991200 !important;
     border-color: #991200 !important;
 }
+.title-input,
+.topic-select {
+	margin-bottom: 15px;
+}
 
-/* Question card list */
-.question-card-list {
+.divider {
 	margin-top: 25px;
-	/* padding-top: 10px; */
+	margin-bottom: 25px;
 	border-top: 1px solid #845ec240;
 }
-.question-card-list .questions-header {
+
+.bottom-section {
+	width: 100%;
+	padding-bottom: 25px;
+}
+.pagination-left,
+.pagination-right {
+	width: 5%;
+	display: inline-block;
+	vertical-align: middle;
+	text-align: center;
+	font-family: "HelveticaNeue-Medium", sans-serif;
+	font-weight: bold;
+	cursor: pointer;
+	color: #845EC2;
+	transform: scale(1, 2.5);
+	-webkit-transform: scale(1.2, 2.5); /* Safari and Chrome */
+	-moz-transform: scale(1.2, 2.5); /* Firefox */
+	-ms-transform: scale(1.2, 2.5); /* IE 9+ */
+	-o-transform: scale(1.2, 2.5); /* Opera */
+}
+.pagination-left:hover ,
+.pagination-right:hover  {
+	transform: scale(1.5, 3);
+	-webkit-transform: scale(1.5, 3); /* Safari and Chrome */
+	-moz-transform: scale(1.5, 3); /* Firefox */
+	-ms-transform: scale(1.5, 3); /* IE 9+ */
+	-o-transform: scale(1.5, 3); /* Opera */
+}
+.pagination-left p,
+.pagination-right p {
+	margin: 0;
+}
+.questions-header {
+	margin: 0 auto;
+	width: 90%;
 	margin-top: 15px;
+}
+.question-card-list {
+	width: 90%;
+	display: inline-block;
+	vertical-align: middle;
 }
 .question-card {
 	color: #4B4453;
-	margin-top: 25px;
 	padding: 15px;
+}
+.question-card:not(:first-of-type) {
+	margin-top: 25px;
 }
 .question-card .tipped-container {
 	display: inline-block;
@@ -87,7 +137,7 @@
 	margin-top: 10px;
 }
 
-.title-input,
-.topic-select {
-	margin-bottom: 15px;
-}
+/* Pagination section */
+/* .pagination {
+	float: right;
+} */

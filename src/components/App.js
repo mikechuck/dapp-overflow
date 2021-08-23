@@ -33,31 +33,16 @@ class App extends Component {
 	}
 
 	async loadBlockchainData() {
-		console.log("loading blockchain data")
 		const web3 = window.web3
 		const accounts = await web3.eth.getAccounts()
-		console.log("accounts:", accounts)
 		const networkId = await web3.eth.net.getId()
 		const networkData = DappOverflow.networks[networkId]		
 		this.setState({account: accounts[0]})
 
-		console.log("networkData:", networkData)
-
 		if (networkData) {
-
 			const dappOverflow = web3.eth.Contract(DappOverflow.abi, networkData.address)
 			this.setState({dappOverflow})
 			await this.getPosts()
-
-			// var filter = web3.eth.filter({
-			// 	fromBlock:0,
-			// 	toBlock: 'latest',
-			// 	address: networkData.address,
-			// 	'topics':[
-			// 		web3.utils.sha3('PostCreated(uint,string,string,string,string,uint,uint,address)')
-			// 	]
-			// });
-			// console.log("filter:", filter)
 		} else {
 			window.alert("DappOVerflow contract has not been deployed to this network")
 		}
@@ -92,13 +77,15 @@ class App extends Component {
 
 	async getPosts() {
 		const postCount = await this.state.dappOverflow.methods.postCount().call()
-		console.log("postCount:", postCount.toString(2))
 		this.setState({postCount})
 
-		for (var i = 1; i <= 12; i++) {
-			console.log("i:", i)
+		let startIndex = (this.state.pageNumber - 1) * this.state.postsPerPage
+		let endIndex = this.state.pageNumber * this.state.postsPerPage
+
+		for (var i = startIndex; i < endIndex; i++) {
+			// console.log("i:", i)
 			const post = await this.state.dappOverflow.methods.posts(i).call()
-			console.log("post:", post)
+			// console.log("post:", post)
 			this.setState({
 				posts: [...this.state.posts, post]
 			})
@@ -126,7 +113,9 @@ class App extends Component {
 			dappOverflow: null,
 			posts: [],
 			loading: true,
-			error: false
+			error: false,
+			postsPerPage: 5,
+			pageNumber: 1
 		}
 	}
 
@@ -143,6 +132,7 @@ class App extends Component {
 							captureFile={this.captureFile}
 							createPost={this.createPost}
 							tipPostOwner={this.tipPostOwner}
+							pageNumber={this.state.pageNumber}
 						/>
 						
 				}
