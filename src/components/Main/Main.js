@@ -3,9 +3,58 @@ import Identicon from 'identicon.js';
 import './Main.css';
 
 class Main extends Component {
-	componentDidMount() {
-		console.log("test")
+	constructor(props) {
+		super(props)
+		this.state = {
+			carouselClass: '',
+			loadingQuestionClass: '',
+			loadingNextPage: false,
+			loadingPreviousPage: false
+		}
+		this.previousPage = this.previousPage.bind(this)
+		this.nextPage = this.nextPage.bind(this)
 	}
+
+	// static getDerivedStateFromProps(nextProps, prevState) {
+	// 	console.log("new props")
+	// 	if (prevState.pageNumber && nextProps.pageNumber !== prevState.pageNumber) {
+	// 		console.log("detecting change")
+	// 		return {
+	// 			carouselClass: ''
+	// 		};
+	// 	}
+	// 	return {}
+	// }
+
+	previousPage() {
+		// this.setState({
+		// 	loadingPreviousPage: true,
+		// 	carouselClass: 'move-right'
+		// })
+		this.setState({
+			carouselClass: ''
+		})
+	}
+
+	nextPage() {
+		/*
+		- create new element to the right with blank elemnts
+		- move current view to the left using a transform
+		- delete old element 
+		- when done moving, start loading new content
+		- when done loading, populate view
+		*/
+		this.setState({
+			loadingNextPage: true,
+			loadingQuestionClass: 'loading',
+			carouselClass: 'move-left'
+		})
+		setTimeout(() => {
+			this.props.goToNextPage()
+		}, 1000)
+	}
+
+
 
 	render() {
 		return (
@@ -35,41 +84,64 @@ class Main extends Component {
 
 					<h4 className="questions-header">Questions</h4>
 					<div className="bottom-section">
-						<div className="pagination-left">
+						<div className="pagination-left" onClick={this.previousPage}>
 							<p>&#60;</p>
 						</div>
-						<div className="question-card-list">
-							{this.props.posts.map((post, key) => {
-								return (
-									<div className="card question-card" key={key} >
-										<div className="content">
-											<div className="tipped-container">
-												<p className="row-1">0.0082</p>
-												<p className="row-2">ETH Tipped</p>
+						<div className={`carousel ${this.state.carouselClass}`}>
+							{(this.state.loadingPreviousPage) ?
+								<div className="question-card-list">
+									{this.props.posts.map((post, key) => {
+										return (
+											<div className="card question-card" key={key} >
 											</div>
-											<div className="tipped-container">
-												<p className="row-1">3</p>
-												<p className="row-2">Answers</p>
+										)
+									})}
+								</div>
+								:
+								<div className="next-question-card-list">
+								</div>
+							}
+							<div className="question-card-list">
+								{this.props.posts.map((post, key) => {
+									return (
+										<div className="card question-card" key={key} >
+											<div className="content">
+												<div className="tipped-container">
+													<p className="row-1">0.0082</p>
+													<p className="row-2">ETH Tipped</p>
+												</div>
+												<div className="tipped-container">
+													<p className="row-1">3</p>
+													<p className="row-2">Answers</p>
+												</div>
+												<img src={`data:image/png;base64,${new Identicon(post.author, 30).toString()}`}
+												/>
+												<p className="post-title">{post.title}</p>
+												<p className="text-muted post-author">{post.author}</p>
 											</div>
-											<img src={`data:image/png;base64,${new Identicon(post.author, 30).toString()}`}
-											/>
-											<p className="post-title">{post.title}</p>
-											<p className="text-muted post-author">{post.author}</p>
 										</div>
-									</div>
-								)
-							})}
+									)
+								})}
+							</div>
+							{(this.state.loadingNextPage) ?
+								<div className={`question-card-list ${this.state.loadingQuestionClass}`}>
+									{this.props.posts.map((post, key) => {
+										return (
+											<div className="card question-card" key={key} >
+											</div>
+										)
+									})}
+								</div>
+								:
+								<div className="next-question-card-list">
+								</div>
+							}
+
 						</div>
-						<div className="pagination-right">
+						<div className="pagination-right" onClick={this.nextPage}>
 							<p>&#62;</p>
 						</div>
 					</div>
-					{/* <div className="pagination-container">
-							<div className="pagination">
-								Page: {this.props.pageNumber}
-							</div>
-						</div> */}
-					{/* </div> */}
 				</main>
 			</div>
 		);

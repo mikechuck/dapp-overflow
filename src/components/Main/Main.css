@@ -87,15 +87,21 @@
 	margin: 0 auto;
 	width: 90%;
 	margin-top: 15px;
+	margin-bottom: 15px;
 }
-.question-card-list {
+.carousel {
 	width: 90%;
 	display: inline-block;
 	vertical-align: middle;
 }
+.question-card-list {
+	width: 100%;
+	vertical-align: top;
+}
 .question-card {
 	color: #4B4453;
 	padding: 15px;
+	height: 70px;
 }
 .question-card:not(:first-of-type) {
 	margin-top: 25px;
@@ -141,3 +147,26 @@
 /* .pagination {
 	float: right;
 } */
+
+
+.carousel {
+	overflow-x: hidden;
+	white-space: nowrap;
+}
+.carousel .loading  .question-card{
+	background: #f5f5f5;
+}
+.carousel.move-left .question-card-list {
+	transform: translate(-765px, 0px);
+	transition: transform 0.5s ease;
+}
+.carousel.move-right .question-card-list {
+	transform: translate(765px, 0px);
+	transition: transform 0.5s ease;
+}
+.question-card-list {
+	display: inline-block;
+}
+.next-question-card-list {
+	display: inline-block;
+}

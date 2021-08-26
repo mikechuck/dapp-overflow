@@ -14,7 +14,7 @@ class App extends Component {
 	async componentWillMount() {
 		try {
 			await this.loadWeb3()
-			await this.loadBlockchainData()
+			
 		} catch (err) {
 			console.log("err:", err)
 			this.setState({error: true})
@@ -25,8 +25,10 @@ class App extends Component {
 		if (window.ethereum) {
 			window.web3 = new Web3(window.ethereum)
 			await window.ethereum.enable()
+			await this.loadBlockchainData()
 		} else if (window.web3) {
 			window.web3 = new Web3(window.web3.currentProvider)
+			await this.loadBlockchainData()
 		} else {
 			window.alert("Non-Ethereum browser detected")
 		}
@@ -76,26 +78,26 @@ class App extends Component {
 	}
 
 	async getPosts() {
+		console.log("getting posts")
 		const postCount = await this.state.dappOverflow.methods.postCount().call()
 		this.setState({postCount})
 
 		let startIndex = (this.state.pageNumber - 1) * this.state.postsPerPage
 		let endIndex = this.state.pageNumber * this.state.postsPerPage
 
+		let postsArray = []
+
 		for (var i = startIndex; i < endIndex; i++) {
 			// console.log("i:", i)
 			const post = await this.state.dappOverflow.methods.posts(i).call()
 			// console.log("post:", post)
-			this.setState({
-				posts: [...this.state.posts, post]
-			})
+			postsArray.push(post)
 		}
 
 		this.setState({
-			posts: this.state.posts.sort((a, b) => b.tipAmount - a.tipAmount)
+			posts: postsArray.sort((a, b) => b.tipAmount - a.tipAmount),
+			loading: false
 		})
-
-		this.setState({loading: false})
 	}
 
 	tipPostOwner = (id, tipAmount) => {
@@ -104,6 +106,23 @@ class App extends Component {
 		// this.state.dappOverflow.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
 		// 	this.setState({ loading: false })
 		//   })
+	}
+
+	goToNextPage = () => {
+		setTimeout(() => {
+			this.setState({
+				pageNumber: this.state.pageNumber + 1
+			})
+			
+			new Promise((resolve, reject) => {
+				setTimeout(() => {
+					this.getPosts()
+					resolve()
+				}, 1000)
+			}).then(() => {
+				console.log("got posts")
+			})
+		}, 1000)
 	}
 
 	constructor(props) {
@@ -133,8 +152,8 @@ class App extends Component {
 							createPost={this.createPost}
 							tipPostOwner={this.tipPostOwner}
 							pageNumber={this.state.pageNumber}
+							goToNextPage={this.goToNextPage}
 						/>
-						
 				}
 			</div>
 		);
