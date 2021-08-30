@@ -6,31 +6,51 @@ class Main extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
+			posts: [],
 			carouselClass: '',
-			loadingQuestionClass: '',
+			loadingPosts: true,
 			loadingNextPage: false,
-			loadingPreviousPage: false
+			loadingPreviousPage: false,
+			pageNumber: 1,
+			postsPerPage: 5
 		}
 		this.previousPage = this.previousPage.bind(this)
 		this.nextPage = this.nextPage.bind(this)
 	}
 
-	// static getDerivedStateFromProps(nextProps, prevState) {
-	// 	console.log("new props")
-	// 	if (prevState.pageNumber && nextProps.pageNumber !== prevState.pageNumber) {
-	// 		console.log("detecting change")
-	// 		return {
-	// 			carouselClass: ''
-	// 		};
-	// 	}
-	// 	return {}
-	// }
+	async componentWillMount() {
+		try {
+			await this.getPosts()
+		} catch (err) {
+			console.log("err:", err)
+			this.setState({error: true})
+		}
+	}
+
+	async getPosts() {
+		console.log("getting posts")
+		const postCount = await this.props.dappOverflow.methods.postCount().call()
+		this.setState({postCount})
+
+		let startIndex = (this.state.pageNumber - 1) * this.state.postsPerPage
+		let endIndex = this.state.pageNumber * this.state.postsPerPage
+
+		let postsArray = []
+
+		for (var i = startIndex; i < endIndex; i++) {
+			// console.log("i:", i)
+			const post = await this.props.dappOverflow.methods.posts(i).call()
+			// console.log("post:", post)
+			postsArray.push(post)
+		}
+
+		this.setState({
+			posts: postsArray.sort((a, b) => b.tipAmount - a.tipAmount),
+			loadingPosts: false
+		})
+	}
 
 	previousPage() {
-		// this.setState({
-		// 	loadingPreviousPage: true,
-		// 	carouselClass: 'move-right'
-		// })
 		this.setState({
 			carouselClass: ''
 		})
@@ -46,12 +66,8 @@ class Main extends Component {
 		*/
 		this.setState({
 			loadingNextPage: true,
-			loadingQuestionClass: 'loading',
 			carouselClass: 'move-left'
 		})
-		setTimeout(() => {
-			this.props.goToNextPage()
-		}, 1000)
 	}
 
 
@@ -88,44 +104,9 @@ class Main extends Component {
 							<p>&#60;</p>
 						</div>
 						<div className={`carousel ${this.state.carouselClass}`}>
-							{(this.state.loadingPreviousPage) ?
-								<div className="question-card-list">
-									{this.props.posts.map((post, key) => {
-										return (
-											<div className="card question-card" key={key} >
-											</div>
-										)
-									})}
-								</div>
-								:
-								<div className="next-question-card-list">
-								</div>
-							}
-							<div className="question-card-list">
-								{this.props.posts.map((post, key) => {
-									return (
-										<div className="card question-card" key={key} >
-											<div className="content">
-												<div className="tipped-container">
-													<p className="row-1">0.0082</p>
-													<p className="row-2">ETH Tipped</p>
-												</div>
-												<div className="tipped-container">
-													<p className="row-1">3</p>
-													<p className="row-2">Answers</p>
-												</div>
-												<img src={`data:image/png;base64,${new Identicon(post.author, 30).toString()}`}
-												/>
-												<p className="post-title">{post.title}</p>
-												<p className="text-muted post-author">{post.author}</p>
-											</div>
-										</div>
-									)
-								})}
-							</div>
-							{(this.state.loadingNextPage) ?
+							{(this.state.loadingPosts) ?
 								<div className={`question-card-list ${this.state.loadingQuestionClass}`}>
-									{this.props.posts.map((post, key) => {
+									{this.state.posts.map((post, key) => {
 										return (
 											<div className="card question-card" key={key} >
 											</div>
@@ -133,10 +114,30 @@ class Main extends Component {
 									})}
 								</div>
 								:
-								<div className="next-question-card-list">
+								<div className="question-card-list">
+									{this.state.posts.map((post, key) => {
+										return (
+											<div className="card question-card" key={key} >
+												<div className="content">
+													<div className="tipped-container">
+														<p className="row-1">0.0082</p>
+														<p className="row-2">ETH Tipped</p>
+													</div>
+													<div className="tipped-container">
+														<p className="row-1">3</p>
+														<p className="row-2">Answers</p>
+													</div>
+													<img src={`data:image/png;base64,${new Identicon(post.author, 30).toString()}`}
+													/>
+													<p className="post-title">{post.title}</p>
+													<p className="text-muted post-author">{post.author}</p>
+												</div>
+											</div>
+										)
+									})}
 								</div>
 							}
-
+							
 						</div>
 						<div className="pagination-right" onClick={this.nextPage}>
 							<p>&#62;</p>

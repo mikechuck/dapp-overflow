@@ -14,7 +14,6 @@ class App extends Component {
 	async componentWillMount() {
 		try {
 			await this.loadWeb3()
-			
 		} catch (err) {
 			console.log("err:", err)
 			this.setState({error: true})
@@ -43,8 +42,10 @@ class App extends Component {
 
 		if (networkData) {
 			const dappOverflow = web3.eth.Contract(DappOverflow.abi, networkData.address)
+			console.log("setting dappoverflow variable")
 			this.setState({dappOverflow})
-			await this.getPosts()
+			// await this.getPosts()
+			this.setState({loading: false})
 		} else {
 			window.alert("DappOVerflow contract has not been deployed to this network")
 		}
@@ -77,29 +78,6 @@ class App extends Component {
 		})
 	}
 
-	async getPosts() {
-		console.log("getting posts")
-		const postCount = await this.state.dappOverflow.methods.postCount().call()
-		this.setState({postCount})
-
-		let startIndex = (this.state.pageNumber - 1) * this.state.postsPerPage
-		let endIndex = this.state.pageNumber * this.state.postsPerPage
-
-		let postsArray = []
-
-		for (var i = startIndex; i < endIndex; i++) {
-			// console.log("i:", i)
-			const post = await this.state.dappOverflow.methods.posts(i).call()
-			// console.log("post:", post)
-			postsArray.push(post)
-		}
-
-		this.setState({
-			posts: postsArray.sort((a, b) => b.tipAmount - a.tipAmount),
-			loading: false
-		})
-	}
-
 	tipPostOwner = (id, tipAmount) => {
 		console.log("tipping post owner")
 		// this.setState({loading: true})
@@ -108,22 +86,22 @@ class App extends Component {
 		//   })
 	}
 
-	goToNextPage = () => {
-		setTimeout(() => {
-			this.setState({
-				pageNumber: this.state.pageNumber + 1
-			})
+	// goToNextPage = () => {
+	// 	setTimeout(() => {
+	// 		this.setState({
+	// 			pageNumber: this.state.pageNumber + 1
+	// 		})
 			
-			new Promise((resolve, reject) => {
-				setTimeout(() => {
-					this.getPosts()
-					resolve()
-				}, 1000)
-			}).then(() => {
-				console.log("got posts")
-			})
-		}, 1000)
-	}
+	// 		new Promise((resolve, reject) => {
+	// 			setTimeout(() => {
+	// 				this.getPosts()
+	// 				resolve()
+	// 			}, 1000)
+	// 		}).then(() => {
+	// 			console.log("got posts")
+	// 		})
+	// 	}, 1000)
+	// }
 
 	constructor(props) {
 		super(props)
@@ -151,8 +129,7 @@ class App extends Component {
 							captureFile={this.captureFile}
 							createPost={this.createPost}
 							tipPostOwner={this.tipPostOwner}
-							pageNumber={this.state.pageNumber}
-							goToNextPage={this.goToNextPage}
+							dappOverflow={this.state.dappOverflow}
 						/>
 				}
 			</div>
