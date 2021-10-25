@@ -2,31 +2,48 @@
 .main-container {
 	margin: 0 auto;
 	background: white;
-	border-radius: 25px;
-	margin-bottom: 75px;
-	max-width: 850px;
+	border-radius: 1.5rem;
+	margin-bottom: 4rem;
+	max-width: 55rem;
+	box-shadow: 0 0.75rem 1.15rem rgba(0,0,0,0.19), 0 0.25rem 0.25rem rgba(0,0,0,0.23);
 }
 
 /* Question form container */
 .form-container {
 	width: 100%;
-	padding: 25px
+	padding: 1.75rem
 }
 .form-container .form-title {
 	font-size: 1.5rem;
 }
 .form-container form {
-	margin-top: 25px;
-	/* max-width: 850px; */
+	margin-top: 1.75rem;
 }
-.form-container input,
+.form-container .file-input {
+	display: none;
+}
+.form-container .file-label {
+	margin-left: 1rem;
+}
+.file-select-container .file-select-button {
+	background-color: #D65DB1;
+	color: white;
+	border-radius: 1.75rem;
+}
 .form-container select,
 .form-container textarea,
+.form-container input,
 .column-mdiddle option  {
-	border-radius: 25px;
+	border-radius: 1.75rem;
+	/* padding: 0.5rem 1rem */
+}
+.form-container textarea,
+.form-container input {
+	/* border-radius: 1.75rem; */
+	padding: 0.5rem 1rem
 }
 .form-container .form-group {
-	margin-top: 15px;
+	margin-top: 1.5rem;
 }
 .form-container textarea {
 	height: 100px;
@@ -42,18 +59,20 @@
 }
 .title-input,
 .topic-select {
-	margin-bottom: 15px;
-}
-
-.divider {
-	margin-top: 25px;
-	margin-bottom: 25px;
-	border-top: 1px solid #845ec240;
+	margin-bottom: 1rem;
 }
 
 .bottom-section {
 	width: 100%;
-	padding-bottom: 25px;
+	padding-bottom: 1.5rem;
+}
+.empty-container {
+	padding: 1.5rem 3rem;
+	font-weight: bold;
+	color: #D65DB1;
+}
+.empty-container p {
+	text-align: center;
 }
 .pagination-left,
 .pagination-right {
@@ -83,43 +102,22 @@
 .pagination-right p {
 	margin: 0;
 }
+.questions-top {
+	padding: .75rem 3rem 1.5rem 3rem;
+}
 .questions-header {
 	margin: 0 auto;
-	width: 90%;
-	margin-top: 15px;
-	margin-bottom: 15px;
+	display: inline-block;
+}
+.pages-info {
+	margin-top: 8px;
+	margin-bottom: 0;
+	float: right;
+	font-weight: bold;
+	font-size: 0.9rem;
 }
 .carousel {
 	width: 90%;
 	display: inline-block;
 	vertical-align: middle;
-}
-
-
-/* Pagination section */
-/* .pagination {
-	float: right;
-} */
-
-
-.carousel {
-	overflow-x: hidden;
-	white-space: nowrap;
-}
-.carousel .loading  .question-card{
-	background: #f5f5f5;
-}
-.carousel.move-left .question-card-list {
-	transform: translate(-765px, 0px);
-	transition: transform 0.5s ease;
-}
-.carousel.move-right .question-card-list {
-	transform: translate(765px, 0px);
-	transition: transform 0.5s ease;
-}
-.question-card-list {
-	display: inline-block;
-}
-.next-question-card-list {
-	display: inline-block;
 }

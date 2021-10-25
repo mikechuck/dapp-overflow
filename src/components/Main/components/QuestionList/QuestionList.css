@@ -1,12 +1,38 @@
 .question-card-list {
 	width: 100%;
 	vertical-align: top;
+	display: inline-block;
 }
 .question-card {
 	color: #4B4453;
-	padding: 15px;
-	height: 70px;
+	padding: 1rem;
+	height: 4rem;
+	cursor: pointer;
 }
+.question-card:hover {
+	box-shadow: 0 3px 8px rgba(0,0,0,0.05), 0 2px 2px rgba(0,0,0,0.10);
+}
+
+/* loading animation */
+.question-card.loading {
+	background: #e2e2e2;
+	background-color: #e2e2e2;
+	background-size: 200% 200%;
+	background-image: linear-gradient(-45deg,#e2e2e2, #fff);
+	animation: gradient 1.5s ease infinite;
+}
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 .question-card:not(:first-of-type) {
 	margin-top: 25px;
 }
@@ -40,7 +66,6 @@
 .question-card .post-author {
 	float: right;
 	vertical-align: middle;
-	/* display: inline-block; */
 	font-size: 80%;
     font-weight: 400;
 	margin-bottom: 0;

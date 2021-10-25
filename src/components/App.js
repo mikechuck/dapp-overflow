@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Web3 from 'web3';
-import Identicon from 'identicon.js';
 import './App.css';
 import DappOverflow from '../abis/DappOverflow.json'
 import Navbar from './Navbar/Navbar'
@@ -10,6 +9,20 @@ const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({host: 'ipfs.infura.io', port: 5001, protocol: 'https'})
 
 class App extends Component {
+
+	constructor(props) {
+		super(props)
+		this.state = {
+			account: '',
+			dappOverflow: null,
+			posts: [],
+			loading: true,
+			error: false,
+			postsPerPage: 5,
+			pageNumber: 1,
+			savingQuestion: false
+		}
+	}
 
 	async componentWillMount() {
 		try {
@@ -51,29 +64,28 @@ class App extends Component {
 		}
 	}
 
-	captureFile = event => {
-		event.preventDefault()
-		const file = event.target.files[0]
+	captureFile = file => {
 		const reader = new window.FileReader()
 		reader.readAsArrayBuffer(file)
 
 		reader.onloadend = () => {
-			this.setState({buffer: Buffer(reader.result)})
+			this.setState({
+				buffer: Buffer(reader.result)
+			})
 		}
 	}
 
 	createPost = (title, topic, question) => {
+		this.setState({loading: true})
 		ipfs.add(this.state.buffer, (error, result) => {
 			if (error) {
 				console.error(error)
 				return
 			}
-
-			this.setState({loading: true})
 			this.state.dappOverflow.methods.createPost(title, topic, result[0].hash, question).send({from: this.state.account}).on('transactionHash', async (hash) => {
 				this.setState({loading: false})
 				console.log("hash:", hash)
-				await this.getPosts()
+				// await this.getPosts()
 			})
 		})
 	}
@@ -86,36 +98,6 @@ class App extends Component {
 		//   })
 	}
 
-	// goToNextPage = () => {
-	// 	setTimeout(() => {
-	// 		this.setState({
-	// 			pageNumber: this.state.pageNumber + 1
-	// 		})
-			
-	// 		new Promise((resolve, reject) => {
-	// 			setTimeout(() => {
-	// 				this.getPosts()
-	// 				resolve()
-	// 			}, 1000)
-	// 		}).then(() => {
-	// 			console.log("got posts")
-	// 		})
-	// 	}, 1000)
-	// }
-
-	constructor(props) {
-		super(props)
-		this.state = {
-			account: '',
-			dappOverflow: null,
-			posts: [],
-			loading: true,
-			error: false,
-			postsPerPage: 5,
-			pageNumber: 1
-		}
-	}
-
 	render() {
 		return (
 			<div className="main">
@@ -123,13 +105,14 @@ class App extends Component {
 				{this.state.error 
 					? <div id="error" className="error text-center mt-5"><p>There was an error connecting to the blockchain or account. Please refresh and try again.</p></div>
 					: this.state.loading
-						? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
+						? <div id="loader" className="loading-container text-center mt-5"><p>Loading dApp...</p></div>
 						: <Main
 							posts={this.state.posts}
 							captureFile={this.captureFile}
 							createPost={this.createPost}
 							tipPostOwner={this.tipPostOwner}
 							dappOverflow={this.state.dappOverflow}
+							savingQuestion={this.state.savingQuestion}
 						/>
 				}
 			</div>
